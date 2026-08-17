@@ -3,8 +3,11 @@
 import { useState } from "react";
 import WaffleCone from "@/components/animations/WaffleCone";
 import { useLang } from "@/context/LangContext";
+import FreezerReveal from "@/components/effects/FreezerReveal";
+import Scoop3D from "@/components/3d/Scoop3D";
+import { Rotate3D, Sparkles, X } from "lucide-react";
 
-// Individual flavour theme colors for realistic gelato visuals (mapped by index/order)
+// Individual flavour theme colors for realistic gelato visuals
 const scoopColorMap = [
   "#FFF8DC", // Vanilla
   "#3D2314", // Chocolate
@@ -26,22 +29,6 @@ const scoopColorMap = [
   "#EBF3E8", // Coconut
 ];
 
-function MiniScoopIcon({ color }: { color: string }) {
-  return (
-    <svg width="34" height="42" viewBox="0 0 34 42" fill="none" xmlns="http://www.w3.org/2000/svg" className="transform group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-300">
-      {/* Scoop */}
-      <circle cx="17" cy="14" r="12" fill={color} className="filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.15)]" />
-      {/* Shine highlight */}
-      <ellipse cx="13" cy="10" rx="3.5" ry="5.5" fill="white" opacity="0.4" transform="rotate(-30 13 10)" />
-      {/* Waffle Cone */}
-      <polygon points="17,38 7,20 27,20" fill="#D4A76A" />
-      <line x1="17" y1="38" x2="11" y2="22" stroke="rgba(0,0,0,0.15)" strokeWidth="0.8" />
-      <line x1="17" y1="38" x2="23" y2="22" stroke="rgba(0,0,0,0.15)" strokeWidth="0.8" />
-      <line x1="9" y1="28" x2="25" y2="28" stroke="rgba(0,0,0,0.12)" strokeWidth="0.8" />
-    </svg>
-  );
-}
-
 type FlavourItem = {
   name: string;
   category: string;
@@ -49,18 +36,26 @@ type FlavourItem = {
   isVegan?: boolean;
 };
 
-function FlipCard({ flavour, index, hoverText }: { flavour: FlavourItem; index: number; hoverText: string }) {
+function FlipCard({
+  flavour,
+  index,
+  hoverText,
+  onOpen3D,
+}: {
+  flavour: FlavourItem;
+  index: number;
+  hoverText: string;
+  onOpen3D: () => void;
+}) {
   const [flipped, setFlipped] = useState(false);
   const color = scoopColorMap[index % scoopColorMap.length];
 
   return (
     <div
-      className="relative cursor-pointer group"
-      style={{ perspective: "1000px", height: "210px" }}
+      className="relative group"
+      style={{ perspective: "1000px", height: "230px" }}
       onMouseEnter={() => setFlipped(true)}
       onMouseLeave={() => setFlipped(false)}
-      onClick={() => setFlipped((f) => !f)}
-      role="button"
       tabIndex={0}
       onKeyDown={(e) => e.key === "Enter" && setFlipped((f) => !f)}
       aria-label={`${flavour.name} – ${flavour.description}`}
@@ -78,7 +73,7 @@ function FlipCard({ flavour, index, hoverText }: { flavour: FlavourItem; index: 
         {/* Front */}
         <div
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden" }}
-          className="absolute inset-0 bg-cream rounded-2xl p-6 flex flex-col justify-between shadow-sm hover:shadow-xl border border-sand/40 transition-all duration-300 group-hover:border-[#D4AF37]/40"
+          className="absolute inset-0 bg-cream rounded-2xl p-6 flex flex-col justify-between shadow-sm hover:shadow-xl border border-sand/40 transition-all duration-300 group-hover:border-[#D4AF37]/50"
         >
           <div>
             <div className="flex justify-between items-start mb-2">
@@ -90,7 +85,28 @@ function FlipCard({ flavour, index, hoverText }: { flavour: FlavourItem; index: 
                   {flavour.category}
                 </p>
               </div>
-              <MiniScoopIcon color={color} />
+
+              {/* 3D Scoop Mini Preview */}
+              <div
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onOpen3D();
+                }}
+                className="relative cursor-pointer group/scoop flex-shrink-0"
+                title="Click to spin in 3D"
+              >
+                <Scoop3D
+                  flavourName={flavour.name}
+                  color={color}
+                  size={46}
+                  autoRotate={true}
+                  interactive={false}
+                  className="filter drop-shadow-md group-hover/scoop:scale-110 transition-transform"
+                />
+                <span className="absolute -bottom-1 -right-1 bg-nordic-blue text-cream p-1 rounded-full text-[9px] shadow opacity-80 group-hover/scoop:opacity-100">
+                  <Rotate3D size={10} />
+                </span>
+              </div>
             </div>
           </div>
 
@@ -104,9 +120,16 @@ function FlipCard({ flavour, index, hoverText }: { flavour: FlavourItem; index: 
                 Gelato
               </span>
             )}
-            <span className="text-xs text-nordic-blue font-medium group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
-              {hoverText}
-            </span>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpen3D();
+              }}
+              className="text-xs text-nordic-blue hover:text-warm-brown font-medium transition-colors inline-flex items-center gap-1.5 bg-sand/30 hover:bg-sand/60 px-2.5 py-1 rounded-full cursor-pointer"
+            >
+              <Rotate3D size={12} className="text-[#D4AF37]" />
+              <span>3D Spin</span>
+            </button>
           </div>
         </div>
 
@@ -119,24 +142,40 @@ function FlipCard({ flavour, index, hoverText }: { flavour: FlavourItem; index: 
             backgroundColor: "#2C4C5B",
             color: "#F9F6F0",
           }}
-          className="absolute inset-0 rounded-2xl p-6 flex flex-col justify-between shadow-xl border border-[#D4AF37]/30"
+          className="absolute inset-0 rounded-2xl p-6 flex flex-col justify-between shadow-xl border border-[#D4AF37]/40"
         >
           <div>
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-playfair text-xl font-bold text-cream">{flavour.name}</h3>
-              <MiniScoopIcon color={color} />
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onOpen3D();
+                }}
+                className="bg-white/15 hover:bg-white/30 text-cream p-1.5 rounded-full transition-all cursor-pointer"
+                title="Open 3D Studio"
+              >
+                <Rotate3D size={14} className="text-[#D4AF37]" />
+              </button>
             </div>
             <p className="text-sm font-light leading-relaxed text-cream/90">{flavour.description}</p>
           </div>
-          <div className="flex justify-between items-center pt-2">
+
+          <div className="flex justify-between items-center pt-2 border-t border-cream/20">
             {flavour.isVegan && (
               <span className="text-[9px] uppercase tracking-widest border border-cream/50 text-cream px-2 py-0.5 rounded-sm font-semibold">
                 🌱 Vegan
               </span>
             )}
-            <span className="text-[11px] text-sand uppercase tracking-wider font-semibold ml-auto">
-              Blåvand Gelato
-            </span>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpen3D();
+              }}
+              className="text-[11px] text-[#D4AF37] uppercase tracking-wider font-semibold ml-auto hover:underline cursor-pointer flex items-center gap-1"
+            >
+              <span>3D Vorschau</span> ↗
+            </button>
           </div>
         </div>
       </div>
@@ -145,8 +184,9 @@ function FlipCard({ flavour, index, hoverText }: { flavour: FlavourItem; index: 
 }
 
 export default function FlavourGrid() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const [activeCategory, setActiveCategory] = useState("all");
+  const [active3DFlavour, setActive3DFlavour] = useState<{ flavour: FlavourItem; index: number } | null>(null);
 
   const flavoursList = t.flavours.items;
   const categories = ["all", ...Array.from(new Set(flavoursList.map((f) => f.category)))];
@@ -158,67 +198,136 @@ export default function FlavourGrid() {
 
   return (
     <section id="eis" className="py-20 md:py-28 bg-sand/20 text-warm-brown overflow-hidden relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header with decorative cone */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-8">
-          <div>
-            <p className="text-nordic-blue text-xs font-semibold uppercase tracking-widest mb-3">
-              {t.flavours.eyebrow}
-            </p>
-            <h2 className="font-playfair text-3xl md:text-5xl lg:text-6xl leading-tight max-w-xl">
-              {t.flavours.headline}
-              <br />
-              <span className="italic font-normal">{t.flavours.subheadline}</span>
-            </h2>
-            <p className="text-warm-brown/70 mt-4 text-sm md:text-base font-light max-w-lg leading-relaxed">
-              {t.flavours.note}
-            </p>
-          </div>
-          {/* Animated waffle cone decoration */}
-          <div className="hidden sm:block self-center md:self-auto">
-            <WaffleCone className="text-nordic-blue/35 w-20 md:w-24 flex-shrink-0" />
-          </div>
-        </div>
+      <FreezerReveal>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          {/* Header with decorative cone */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-8">
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-nordic-blue text-xs font-semibold uppercase tracking-widest">
+                  {t.flavours.eyebrow}
+                </span>
+                <span className="bg-[#D4AF37]/20 text-warm-brown text-[10px] font-bold px-2 py-0.5 rounded-full border border-[#D4AF37]/40 flex items-center gap-1">
+                  <Sparkles size={10} className="text-[#D4AF37]" />
+                  <span>3D Interactive</span>
+                </span>
+              </div>
 
-        {/* Category filter pills */}
-        <div className="flex flex-wrap gap-2.5 mb-10">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`px-5 py-2 rounded-full text-xs md:text-sm font-medium transition-all duration-300 ${
-                activeCategory === cat
-                  ? "bg-nordic-blue text-cream shadow-md scale-105"
-                  : "bg-cream text-warm-brown hover:bg-sand/70 border border-sand/50"
-              }`}
-            >
-              {cat === "all" ? t.flavours.all : cat}
-            </button>
-          ))}
-        </div>
-
-        {/* Flip card grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map((flavour, i) => (
-            <div
-              key={flavour.name}
-              style={{
-                animation: `fadeSlideIn 0.4s ease-out both`,
-                animationDelay: `${i * 0.04}s`,
-              }}
-            >
-              <FlipCard flavour={flavour} index={i} hoverText={t.flavours.hoverHint} />
+              <h2 className="font-playfair text-3xl md:text-5xl lg:text-6xl leading-tight max-w-xl">
+                {t.flavours.headline}
+                <br />
+                <span className="italic font-normal">{t.flavours.subheadline}</span>
+              </h2>
+              <p className="text-warm-brown/70 mt-4 text-sm md:text-base font-light max-w-lg leading-relaxed">
+                {t.flavours.note}
+              </p>
             </div>
-          ))}
-        </div>
 
-        <style>{`
-          @keyframes fadeSlideIn {
-            from { opacity: 0; transform: translateY(14px); }
-            to   { opacity: 1; transform: translateY(0); }
-          }
-        `}</style>
-      </div>
+            {/* Animated waffle cone decoration */}
+            <div className="hidden sm:block self-center md:self-auto">
+              <WaffleCone className="text-nordic-blue/35 w-20 md:w-24 flex-shrink-0" />
+            </div>
+          </div>
+
+          {/* Category filter pills */}
+          <div className="flex flex-wrap gap-2.5 mb-10">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`px-5 py-2 rounded-full text-xs md:text-sm font-medium transition-all duration-300 cursor-pointer ${
+                  activeCategory === cat
+                    ? "bg-nordic-blue text-cream shadow-md scale-105"
+                    : "bg-cream text-warm-brown hover:bg-sand/70 border border-sand/50"
+                }`}
+              >
+                {cat === "all" ? t.flavours.all : cat}
+              </button>
+            ))}
+          </div>
+
+          {/* Flip card grid with 3D Preview Triggers */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filtered.map((flavour, i) => (
+              <div
+                key={flavour.name}
+                style={{
+                  animation: `fadeSlideIn 0.4s ease-out both`,
+                  animationDelay: `${i * 0.04}s`,
+                }}
+              >
+                <FlipCard
+                  flavour={flavour}
+                  index={i}
+                  hoverText={t.flavours.hoverHint}
+                  onOpen3D={() => setActive3DFlavour({ flavour, index: i })}
+                />
+              </div>
+            ))}
+          </div>
+
+          <style>{`
+            @keyframes fadeSlideIn {
+              from { opacity: 0; transform: translateY(14px); }
+              to   { opacity: 1; transform: translateY(0); }
+            }
+          `}</style>
+        </div>
+      </FreezerReveal>
+
+      {/* 3D Scoop Studio Modal */}
+      {active3DFlavour && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fadeIn"
+          onClick={() => setActive3DFlavour(null)}
+        >
+          <div
+            className="relative bg-cream/95 text-warm-brown rounded-3xl p-8 max-w-md w-full shadow-2xl border border-sand/80 flex flex-col items-center text-center overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close button */}
+            <button
+              onClick={() => setActive3DFlavour(null)}
+              className="absolute top-4 right-4 text-warm-brown/60 hover:text-warm-brown bg-sand/40 hover:bg-sand p-2 rounded-full transition-colors cursor-pointer"
+            >
+              <X size={20} />
+            </button>
+
+            <span className="text-xs uppercase tracking-widest font-semibold text-nordic-blue/70 mb-1">
+              {active3DFlavour.flavour.category}
+            </span>
+            <h3 className="font-playfair text-3xl font-bold mb-2 text-warm-brown">
+              {active3DFlavour.flavour.name}
+            </h3>
+            <p className="text-xs text-warm-brown/60 mb-4 flex items-center gap-1.5">
+              <Rotate3D size={14} className="text-[#D4AF37]" />
+              <span>{lang === "de" ? "Klicken & ziehen zum Drehen" : "Click & drag to rotate in 3D"}</span>
+            </p>
+
+            {/* 3D Scoop Canvas */}
+            <div className="relative my-2 p-4 bg-gradient-to-b from-sand/30 to-sand/60 rounded-2xl border border-sand/50 shadow-inner flex items-center justify-center w-full">
+              <Scoop3D
+                flavourName={active3DFlavour.flavour.name}
+                color={scoopColorMap[active3DFlavour.index % scoopColorMap.length]}
+                size={220}
+                autoRotate={true}
+                interactive={true}
+                className="filter drop-shadow-2xl"
+              />
+            </div>
+
+            <p className="text-sm font-light text-warm-brown/85 leading-relaxed mt-4">
+              {active3DFlavour.flavour.description}
+            </p>
+
+            {active3DFlavour.flavour.isVegan && (
+              <span className="mt-3 text-xs uppercase tracking-wider bg-sage/20 text-sage px-3 py-1 rounded-full font-bold">
+                🌱 100% Vegan
+              </span>
+            )}
+          </div>
+        </div>
+      )}
     </section>
   );
 }

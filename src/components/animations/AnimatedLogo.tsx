@@ -10,17 +10,17 @@ type Props = {
 };
 
 export default function AnimatedLogo({
-  size = 56,
+  size = 58,
   glow = true,
   withBackdrop = true,
   backdropVariant = "dark",
   className = "",
 }: Props) {
   const backdropStyles = {
-    dark: "bg-warm-brown/90 shadow-lg border border-sand/30",
-    blue: "bg-nordic-blue/95 shadow-lg border border-sand/40",
-    cream: "bg-cream/95 shadow-md border border-sand/60",
-    gold: "bg-gradient-to-br from-warm-brown/95 via-[#3a2d24] to-nordic-blue/95 shadow-xl border border-[#D4AF37]/50",
+    dark: "bg-warm-brown/95 shadow-xl border border-sand/40",
+    blue: "bg-nordic-blue/95 shadow-xl border border-sand/40",
+    cream: "bg-cream/95 shadow-md border border-sand/70",
+    gold: "bg-gradient-to-br from-warm-brown/95 via-[#34241a] to-nordic-blue/95 shadow-xl border border-[#D4AF37]/60",
   };
 
   const logoSrc = getAssetPath("/logo.png");
@@ -37,18 +37,18 @@ export default function AnimatedLogo({
         }
         @keyframes goldenPulse {
           0%, 100% {
-            box-shadow: 0 0 12px 2px rgba(212, 175, 55, 0.3), 0 0 24px 4px rgba(212, 175, 55, 0.15);
+            box-shadow: 0 0 10px 2px rgba(212, 175, 55, 0.25), 0 0 20px 4px rgba(212, 175, 55, 0.1);
           }
           50% {
-            box-shadow: 0 0 22px 7px rgba(212, 175, 55, 0.5), 0 0 38px 12px rgba(212, 175, 55, 0.25);
+            box-shadow: 0 0 18px 5px rgba(212, 175, 55, 0.45), 0 0 32px 8px rgba(212, 175, 55, 0.2);
           }
         }
         @keyframes logoFloat {
           0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-2px); }
+          50% { transform: translateY(-1.5px); }
         }
         .orbit-ring {
-          animation: orbitSpin 20s linear infinite;
+          animation: orbitSpin 24s linear infinite;
         }
         .golden-glow {
           animation: goldenPulse 4s ease-in-out infinite;
@@ -66,29 +66,29 @@ export default function AnimatedLogo({
         />
       )}
 
-      {/* Rotating golden orbit dash ring */}
+      {/* Rotating golden orbit dashed ring */}
       <div
-        className="orbit-ring absolute -inset-1.5 rounded-full pointer-events-none opacity-50 group-hover:opacity-90 transition-opacity"
+        className="orbit-ring absolute -inset-1 rounded-full pointer-events-none opacity-50 group-hover:opacity-90 transition-opacity"
         style={{
           border: "1.5px dashed #D4AF37",
           zIndex: 1,
         }}
       />
 
-      {/* Background disc container for high contrast */}
+      {/* Background disc container zoomed out for 100% visibility of outer circle text */}
       <div
-        className={`relative z-10 w-full h-full rounded-full flex items-center justify-center overflow-hidden p-1.5 backdrop-blur-md transition-all duration-300 ${
+        className={`relative z-10 w-full h-full rounded-full flex items-center justify-center overflow-hidden p-2 backdrop-blur-md transition-all duration-300 ${
           withBackdrop ? backdropStyles[backdropVariant] : ""
         }`}
       >
-        <div className="logo-float w-full h-full relative flex items-center justify-center">
+        <div className="logo-float w-full h-full relative flex items-center justify-center p-0.5">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={logoSrc}
             alt="Blåvand Eiscafé"
             width={size}
             height={size}
-            className="w-full h-full object-contain filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
+            className="w-full h-full object-contain filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] transform scale-95"
           />
         </div>
       </div>

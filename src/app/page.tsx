@@ -12,10 +12,11 @@ import ReviewsSection from "@/components/sections/ReviewsSection";
 import InstagramGrid from "@/components/sections/InstagramGrid";
 import LocationSection from "@/components/sections/LocationSection";
 import FinalCTA from "@/components/sections/FinalCTA";
+import BackToTop from "@/components/ui/BackToTop";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col bg-cream text-warm-brown selection:bg-[#D4AF37]/30 selection:text-warm-brown">
+    <main className="flex min-h-screen flex-col bg-cream text-warm-brown selection:bg-[#D4AF37]/30 selection:text-warm-brown relative">
       <Navbar />
 
       <Hero />
@@ -32,6 +33,9 @@ export default function Home() {
       <FinalCTA />
 
       <Footer />
+
+      {/* Floating Back to Top Quick-Scroll Button */}
+      <BackToTop />
     </main>
   );
 }

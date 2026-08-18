@@ -18,7 +18,7 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close mobile menu on escape or resize
+  // Close mobile menu on escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") setIsMobileMenuOpen(false);
@@ -52,26 +52,35 @@ export default function Navbar() {
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           solid
-            ? "bg-cream/95 backdrop-blur-md shadow-sm border-b border-sand/40 py-2.5"
+            ? "bg-cream/95 backdrop-blur-md shadow-sm border-b border-sand/40 py-2"
             : "bg-transparent py-4"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-14 md:h-16">
             {/* Logo */}
-            <Link href="#" className="flex-shrink-0 flex items-center gap-3">
+            <Link href="#" className="flex-shrink-0 flex items-center gap-3 group">
               <AnimatedLogo
-                size={solid ? 46 : 52}
+                size={solid ? 52 : 62}
                 backdropVariant={solid ? "blue" : "dark"}
                 glow={true}
               />
-              <span
-                className={`font-playfair text-lg font-bold tracking-wide transition-colors ${
-                  solid ? "text-warm-brown" : "text-cream"
-                }`}
-              >
-                Blåvand <span className="font-light italic text-sm opacity-90">Eiscafé</span>
-              </span>
+              <div className="flex flex-col">
+                <span
+                  className={`font-playfair text-lg sm:text-xl font-bold tracking-wide transition-colors leading-tight ${
+                    solid ? "text-warm-brown" : "text-cream"
+                  }`}
+                >
+                  Blåvand
+                </span>
+                <span
+                  className={`text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest ${
+                    solid ? "text-[#D4AF37]" : "text-[#D4AF37]"
+                  }`}
+                >
+                  Eiscafé Kiel
+                </span>
+              </div>
             </Link>
 
             {/* Desktop Nav */}
@@ -166,10 +175,10 @@ export default function Navbar() {
               {/* Drawer Header */}
               <div className="flex justify-between items-center pb-5 border-b border-sand/60">
                 <div className="flex items-center gap-3">
-                  <AnimatedLogo size={42} backdropVariant="blue" glow={false} />
+                  <AnimatedLogo size={52} backdropVariant="blue" glow={true} />
                   <div>
                     <h3 className="font-playfair text-base font-bold leading-tight">Blåvand Eiscafé</h3>
-                    <p className="text-[10px] text-warm-brown/60">Knooper Weg 169 · Kiel</p>
+                    <p className="text-[11px] text-[#D4AF37] font-semibold">Knooper Weg 169 · Kiel</p>
                   </div>
                 </div>
                 <button

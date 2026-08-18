@@ -1,5 +1,5 @@
 "use client";
-import Image from "next/image";
+import { getAssetPath } from "@/utils/asset";
 
 type Props = {
   size?: number;
@@ -20,8 +20,10 @@ export default function AnimatedLogo({
     dark: "bg-warm-brown/90 shadow-lg border border-sand/30",
     blue: "bg-nordic-blue/95 shadow-lg border border-sand/40",
     cream: "bg-cream/95 shadow-md border border-sand/60",
-    gold: "bg-gradient-to-br from-warm-brown/90 via-[#3a2d24] to-nordic-blue/90 shadow-xl border border-[#D4AF37]/50",
+    gold: "bg-gradient-to-br from-warm-brown/95 via-[#3a2d24] to-nordic-blue/95 shadow-xl border border-[#D4AF37]/50",
   };
+
+  const logoSrc = getAssetPath("/logo.png");
 
   return (
     <div
@@ -35,10 +37,10 @@ export default function AnimatedLogo({
         }
         @keyframes goldenPulse {
           0%, 100% {
-            box-shadow: 0 0 12px 2px rgba(212, 175, 55, 0.25), 0 0 24px 4px rgba(212, 175, 55, 0.1);
+            box-shadow: 0 0 12px 2px rgba(212, 175, 55, 0.3), 0 0 24px 4px rgba(212, 175, 55, 0.15);
           }
           50% {
-            box-shadow: 0 0 20px 6px rgba(212, 175, 55, 0.45), 0 0 36px 10px rgba(212, 175, 55, 0.2);
+            box-shadow: 0 0 22px 7px rgba(212, 175, 55, 0.5), 0 0 38px 12px rgba(212, 175, 55, 0.25);
           }
         }
         @keyframes logoFloat {
@@ -64,29 +66,29 @@ export default function AnimatedLogo({
         />
       )}
 
-      {/* Rotating golden orbit dots / dash ring */}
+      {/* Rotating golden orbit dash ring */}
       <div
-        className="orbit-ring absolute -inset-1.5 rounded-full pointer-events-none opacity-40 group-hover:opacity-80 transition-opacity"
+        className="orbit-ring absolute -inset-1.5 rounded-full pointer-events-none opacity-50 group-hover:opacity-90 transition-opacity"
         style={{
           border: "1.5px dashed #D4AF37",
           zIndex: 1,
         }}
       />
 
-      {/* Background disc container for contrast & richness */}
+      {/* Background disc container for high contrast */}
       <div
         className={`relative z-10 w-full h-full rounded-full flex items-center justify-center overflow-hidden p-1.5 backdrop-blur-md transition-all duration-300 ${
           withBackdrop ? backdropStyles[backdropVariant] : ""
         }`}
       >
         <div className="logo-float w-full h-full relative flex items-center justify-center">
-          <Image
-            src="/logo.png"
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={logoSrc}
             alt="Blåvand Eiscafé"
             width={size}
             height={size}
-            className="w-full h-full object-contain filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]"
-            priority
+            className="w-full h-full object-contain filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
           />
         </div>
       </div>

@@ -12,30 +12,17 @@ import ReviewsSection from "@/components/sections/ReviewsSection";
 import InstagramGrid from "@/components/sections/InstagramGrid";
 import LocationSection from "@/components/sections/LocationSection";
 import FinalCTA from "@/components/sections/FinalCTA";
-import DripDivider from "@/components/animations/DripDivider";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col">
+    <main className="flex min-h-screen flex-col bg-cream text-warm-brown selection:bg-[#D4AF37]/30 selection:text-warm-brown">
       <Navbar />
 
       <Hero />
-
-      {/* Cream drip from hero into the about section */}
-      <DripDivider color="#F9F6F0" bgColor="#1a1a1a" />
-
       <About />
       <FlavourGrid />
       <VisualExperience />
-
-      {/* Cream drip from light section into nordic-blue WhyBlavand */}
-      <DripDivider color="#2C4C5B" bgColor="#F9F6F0" />
-
       <WhyBlavand />
-
-      {/* Cream drip from nordic-blue back to cream */}
-      <DripDivider color="#F9F6F0" bgColor="#2C4C5B" />
-
       <CoffeeSection />
       <CafeAtmosphere />
       <TerraceSection />
